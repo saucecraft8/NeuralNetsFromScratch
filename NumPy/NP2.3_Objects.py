@@ -1,8 +1,19 @@
 """
 Normalizing data to 1 (-1 to 1 or 0 to 1) because data can scale exponentially
 through the model as more layers and therefore more calculations are done
+
+Biases tend to be initialized at 0
+However, biases can 'zero out' resulting in a zero being output throughout
+the network if input starts at 0 (one solution: initialize bias as non-zero)
+Ex:
+Input: 0
+Layer1: 0 * weight + 0 == 0
+Layer2: 0 * weight + 0 == 0
+...
+Output: 0
 """
 import numpy as np
+from Abstracting import Layer_Dense as Dense
 
 # Random values
 # 3 Samples
@@ -22,9 +33,8 @@ weights2 = [[0.1 , -0.14 , 0.5],
             [-0.44 , 0.73 , -0.13]]
 bias2 = [-1 , 2 , -0.5]
 
-# np.array().T --> Transpose
-layer1_output = np.dot(X , np.transpose(np.array(weights))) + bias
-layer2_output = np.dot(layer1_output , np.transpose(np.array(weights2))) + bias2
-print(layer2_output)
-
-
+layer1 = Dense(4 , 5)
+layer2 = Dense(5 , 2)
+output = layer1.forward(X)
+output = layer2.forward(output)
+print(output)
