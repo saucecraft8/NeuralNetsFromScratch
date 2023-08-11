@@ -1,6 +1,7 @@
 import numpy as np
 import nnfs
 
+# Forcing conditions to match course (easier to check code)
 np.random.seed(0)
 nnfs.init()
 
@@ -35,3 +36,13 @@ class Activation_ReLU:
     def forward(self , inputs):
         self.output = np.maximum(0 , inputs)
         return self.output
+
+class Activation_Softmax:
+    def __init__(self):
+        self.output = 0
+
+    def forward(self , inputs):
+        exp_vals = np.exp(inputs - np.max(inputs , axis=1 , keepdims=True))
+        self.output = exp_vals / np.sum(exp_vals , axis=1 , keepdims=True)
+        return self.output
+
