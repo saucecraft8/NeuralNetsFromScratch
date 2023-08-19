@@ -46,3 +46,26 @@ class Activation_Softmax:
         self.output = exp_vals / np.sum(exp_vals , axis=1 , keepdims=True)
         return self.output
 
+class Loss:
+    def calculate(self , output , y):
+        sample_losses = self.forward(output , y)
+        data_loss = np.mean(sample_losses) # Batch Loss
+        return data_loss
+
+    # Abstract
+    def forward(self , output , y):
+        return output , y
+
+class Loss_CategoricalCrossentropy(Loss):
+    def forward(self , y_pred , y_true):
+        samples = len(y_pred)
+        y_pred_clipped = np.clip(y_pred , 1e-7 , 1 - 1e-7)
+
+        correct_confidences = 1e-7
+        if len(y_true.shape) == 1:
+            correct_confidences = y_pred_clipped[range(samples) , y_true]
+        elif len(y_true.shape) == 2:
+            correct_confidences = np.sum(y_pred_clipped * y_true , axis = 1)
+
+        negative_log_likelihoods = -np.log(correct_confidences)
+        return negative_log_likelihoods
